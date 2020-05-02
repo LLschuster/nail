@@ -13,12 +13,20 @@ abstract class _Base with Store{
 @observable 
 int pageIndex=0;
 
+@observable 
+String currentImgWorkout;
+
 @observable
 ObservableFuture<List<Workout>> workouts;
 
 @action 
 void mutatePageIndex(int index){
   pageIndex = index;
+}
+
+@action 
+void mutateCurrentImg(String value){
+  currentImgWorkout = value;
 }
 
 @action 

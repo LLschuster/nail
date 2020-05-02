@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         title: 'Nail workuot',
         theme: ThemeData(
             primarySwatch: Colors.grey, accentColor: Colors.blue),
-        home: Consumer<Base>(builder: (_, store, __) => HomePage(title: 'Home Page', store: store,),),
+        home: Consumer<Base>(builder: (_, store, __) => HomePage(title: 'Fitness track', store: store,),),
       ),
     );
   }
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState(){
-    store.getWorkouts('101');
+    //store.getWorkouts('101');
     super.initState();
   }
 
