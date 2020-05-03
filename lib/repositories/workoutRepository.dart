@@ -1,8 +1,12 @@
 
 
+import 'package:nail/db/dbconfig.dart';
+import 'package:nail/models/workout.dart';
+
 class WorkoutRepository {
-  List<List<Map<String, String>>> getWorkout(){
-    var workoutDetailed = [
+  Map<String, dynamic> getWorkout(){
+
+    var workoutDetail = [
       [
           {"name": "Push ups", "reps": "25x", "img": "push-ups"},
           {"name": "Pull ups", "reps": "20x", "img": "pull-ups"},
@@ -19,6 +23,26 @@ class WorkoutRepository {
         {"name": "Sit ups", "reps": "1 min", "img": "sit-ups"},
         ],
       ];
-    return workoutDetailed;
+
+    var workout = {
+      "name" : "full body workout",
+      "id": 001,
+      "workoutDetail": workoutDetail,
+    };
+
+    return workout;
+  }
+
+  Future<Map<String, dynamic>> saveFinishedWorkout(Map<String, dynamic> doneWorkout, double difficultyLevel)async {
+    try {
+    FinishWorkout workout = FinishWorkout.toSave(workoutId: doneWorkout["id"],
+     difficultyLevel: difficultyLevel, name: doneWorkout["name"], workoutDetail: doneWorkout["workoutDetail"].toString());
+    await insertFinishedWorkout(workout);
+    var test = await getFinishedWorkouts();
+    return {"success": true};
+    } catch(e){
+      print(e);
+      return {"error": "workout could not be saved;"};
+    }
   }
 }

@@ -2,13 +2,15 @@ import 'package:nail/models/workout.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-final String FINISHED_WORKOUT_TABLE = "finishedWorkouts";
+const String FINISHED_WORKOUT_TABLE = "finishedWorkouts";
 Future<Database> database() async {
     return openDatabase(
     join(await getDatabasesPath(), "fitness_track.db"),
     onCreate: (db, version){
       db.execute(
-        "CREATE TABLE $FINISHED_WORKOUT_TABLE(id INTEGER PRIMARY KEY, workoutId INTEGER NOT NULL, difficultyLevel REAL DEFAULT 3.0, name TEXT, status INTEGER DEFAULT 1, time INTEGER DEFAULT CURRENT_TIMESTAMP)"
+        "CREATE TABLE $FINISHED_WORKOUT_TABLE(id INTEGER PRIMARY KEY, workoutId INTEGER NOT NULL,"+
+         "difficultyLevel REAL DEFAULT 3.0, name TEXT, status INTEGER DEFAULT 1, time INTEGER DEFAULT (strftime('%s','now')),"+
+         "workoutDetail TEXT)"
         );
     },
     version: 1
@@ -17,8 +19,8 @@ Future<Database> database() async {
 
 Future<void> insertFinishedWorkout(FinishWorkout workout) async{
   var db = await database();
-
-  await db.insert(FINISHED_WORKOUT_TABLE, workout.toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
+  var valuesToInsert = workout.toMap();
+  await db.insert(FINISHED_WORKOUT_TABLE,valuesToInsert ,conflictAlgorithm: ConflictAlgorithm.replace);
 }
 
 Future<List<FinishWorkout>> getFinishedWorkouts() async{
@@ -34,6 +36,7 @@ Future<List<FinishWorkout>> getFinishedWorkouts() async{
       result[i]["time"],
       difficultyLevel: result[i]["difficultyLevel"],
       workoutId: result[i]["workoutId"],
-      name: result[i]["name"]);
+      name: result[i]["name"],
+      workoutDetail: result[i]["workoutDetail"]);
   });
 }
