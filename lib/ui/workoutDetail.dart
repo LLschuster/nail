@@ -59,6 +59,7 @@ class WorkoutDetailState extends State<WorkoutDetail> {
 
   Future<double> getLevelOfFinishedWorkout(BuildContext context) async {
     return await showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return SelectDifficultyDialog();
@@ -148,6 +149,7 @@ class WorkoutDetailState extends State<WorkoutDetail> {
         child: Text(" ${workoutDetail[setIndex][workoutIndex]["reps"]}",
             style: TextStyle(fontSize: 14)),
       ),
+      clock(elapseTime)
     ]);
   }
 
@@ -176,7 +178,7 @@ class WorkoutDetailState extends State<WorkoutDetail> {
                     )
                   : SizedBox(height: 10),
               workoutStarted ? currentWorkout() : workoutList(),
-              clock(elapseTime),
+              
             ]),
       ),
     );

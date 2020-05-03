@@ -47,9 +47,9 @@ class WorkoutRepository {
           workoutId: doneWorkout["id"],
           difficultyLevel: difficultyLevel,
           name: doneWorkout["name"],
-          workoutDetail: doneWorkout["workoutDetail"].toString());
+          workoutDetail: doneWorkout["workoutDetail"].toString()
+        );
       await insertFinishedWorkout(workout);
-      var test = await getFinishedWorkouts();
       return {"success": true};
     } catch (e) {
       print(e);
