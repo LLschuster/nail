@@ -17,7 +17,10 @@ class StatisticsState extends State<Statistics> {
   WorkoutRepository workoutRepository;
   Map<String, dynamic> finishedWorkouts;
   bool _loading = false;
-
+  DateTime minFilterDate;
+  DateTime maxFilterDate;
+  Map<int, dynamic> workoutInMonthDays;
+  Widget workoutOfSelectedDay;
 
   @override
   void initState() {
@@ -25,6 +28,11 @@ class StatisticsState extends State<Statistics> {
     workoutRepository = WorkoutRepository();
     setupData();
     _loading = true;
+    var now = DateTime.now();
+    minFilterDate = DateTime.utc(now.year, now.month, 1);
+    maxFilterDate = minFilterDate.add(Duration(days: 31));
+    workoutInMonthDays = {};
+    workoutOfSelectedDay = Container();
   }
 
   Future<void> setupData() async{
@@ -34,14 +42,11 @@ class StatisticsState extends State<Statistics> {
       _loading = false;
     });
   }
-    @override
-  Widget build(BuildContext context) {
 
-    Widget finishedWorkoutsList() {
-      if (!_loading){
-print(finishedWorkouts);
-      List<FinishWorkout> workouts = finishedWorkouts["workoutList"];
-      List<Widget> workoutsRows = [
+  Widget showWorkoutOfSelectedDay(int day)
+  {
+    List<FinishWorkout> workouts = workoutInMonthDays[day];
+    List<Widget> workoutsRows = [
         Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -67,11 +72,78 @@ print(finishedWorkouts);
           
         );
       }
+      setState(() {
+        workoutOfSelectedDay = Column(
+          children: workoutsRows
+          );
+      });
+  }
+    @override
+  Widget build(BuildContext context) {
 
+    Widget finishedWorkoutsList() {
+      if (!_loading){
+        print(finishedWorkouts);
+        List<FinishWorkout> workouts = finishedWorkouts["workoutList"];
+
+        workoutInMonthDays = {};
+        List<Widget> dayTiles = [];
+        for (DateTime now = minFilterDate; now.isBefore(maxFilterDate);now = now.add(Duration(days: 1)))
+        {
+          bool isDayFilled = false;
+          for (int i=0; i<workouts.length; ++i)
+          {
+            DateTime workoutDate = DateTime.fromMillisecondsSinceEpoch(workouts[i].time * 1000);
+            if (workoutDate.isAfter(now) && workoutDate.isBefore(now.add(Duration(days: 1))))
+            {
+              isDayFilled = true;
+              if (workoutInMonthDays.containsKey(workoutDate.day)){
+                workoutInMonthDays[workoutDate.day].add(workouts[i]);
+                continue;
+              }
+              workoutInMonthDays[workoutDate.day] = [workouts[i]];
+              dayTiles.add(
+                GestureDetector(
+                  onTap: () {showWorkoutOfSelectedDay(now.day);},
+                  child: Container(
+                  width: 40,
+                  height: 40,
+                  child: Text("${now.day}", textAlign: TextAlign.center,),
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(67, 54, 244, workouts[i].difficultyLevel != null? workouts[i].difficultyLevel/5: 0.5) 
+                  ),
+                  ),
+                  ),
+              );
+            }
+          }
+          if (!isDayFilled)
+          {
+              dayTiles.add(
+                GestureDetector(
+                  onTap: () {showWorkoutOfSelectedDay(now.day);},
+                  child: Container(
+                  width: 40,
+                  height: 40,
+                  child: Text("${now.day}", textAlign: TextAlign.center,),
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(240, 240, 240, 1) 
+                  ),
+                  ),
+                  ),
+              );
+          }
+        }
       return Container(
-      padding: EdgeInsets.all(5.0),
+      padding: EdgeInsets.all(25.0),
       child: Column(
-        children: workoutsRows
+        children: <Widget>[
+          Wrap(
+            spacing: 10.0,
+            runSpacing: 5.0,
+            children: dayTiles
+        ), 
+        ]
       ),
     );
       } else {
@@ -83,8 +155,13 @@ print(finishedWorkouts);
     }
 
 
-    return Container(
-      child: finishedWorkoutsList()
+    return SafeArea(
+      child: ListView(
+        padding: EdgeInsets.symmetric(horizontal: 5.0),
+        children: <Widget>[
+        finishedWorkoutsList(),
+        workoutOfSelectedDay
+      ],) 
     );
   }
 }
