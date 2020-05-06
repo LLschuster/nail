@@ -152,7 +152,7 @@ class StatisticsState extends State<Statistics> {
         );
       }
       
-    }
+      }
 
 
     return SafeArea(

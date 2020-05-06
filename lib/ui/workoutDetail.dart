@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nail/main.dart';
 import 'package:nail/repositories/base.dart';
 import 'package:nail/repositories/workoutRepository.dart';
 import 'package:nail/ui/clock.dart';
@@ -6,6 +7,7 @@ import 'package:nail/ui/selectDifficultyDialog.dart';
 import 'package:nail/ui/workoutCard.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:video_player/video_player.dart';
 
 class WorkoutFeedDetail extends StatelessWidget {
   @override
@@ -33,6 +35,7 @@ class WorkoutDetailState extends State<WorkoutDetail> {
   Stopwatch stopwatch;
   Duration elapseTime;
   double difficultyLevel;
+  VideoPlayerController videoPlayerController;
 
   void updateTimer() {
     if (stopwatch.isRunning) {
@@ -46,6 +49,7 @@ class WorkoutDetailState extends State<WorkoutDetail> {
     }
   }
 
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +60,20 @@ class WorkoutDetailState extends State<WorkoutDetail> {
     elapseTime = stopwatch.elapsed;
     difficultyLevel = 3.0;
   }
+
+  void initVideoPlayer()
+  {
+    if (videoPlayerController != null){
+      return;
+    }
+    // the dot dot is for not repeating videoplayerController.intialize etc...
+    videoPlayerController = VideoPlayerController.network(workoutDetail[setIndex][workoutIndex]["video"])
+    ..initialize().then((_) { 
+      setState(() {      
+      });
+    });
+  }
+
 
   Future<double> getLevelOfFinishedWorkout(BuildContext context) async {
     return await showDialog(
@@ -83,6 +101,7 @@ class WorkoutDetailState extends State<WorkoutDetail> {
           difficultyLevel = await getLevelOfFinishedWorkout(context);
           var result = await _workoutRepository.saveFinishedWorkout(workout, difficultyLevel);
           print("wokout is finished");
+          Navigator.push(context, MaterialPageRoute(builder: (_){ return MyApp();}));
         });
       }
       return setState(() {
@@ -128,16 +147,42 @@ class WorkoutDetailState extends State<WorkoutDetail> {
     return Column(children: <Widget>[Text("Your workout is loading")]);
   }
 
-  Widget currentWorkout() {
-    return Column(children: <Widget>[
-      Container(
+  Widget currentWorkoutAsset()
+  {
+    //TODO Why do you run so many times?
+      if (workoutDetail[setIndex][workoutIndex]["video"] != null)
+      {
+        initVideoPlayer();
+        return videoPlayerController.value.initialized ? 
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  !videoPlayerController.value.isPlaying? videoPlayerController.play() : videoPlayerController.pause();
+                });
+              },
+              child: AspectRatio(
+          aspectRatio: videoPlayerController.value.aspectRatio,
+          child: VideoPlayer(videoPlayerController),
+          ),
+            )
+         : Container(
+           padding: EdgeInsets.all(5.0),
+           child: CircularProgressIndicator(),
+         );
+      }
+    return Container(
         padding: EdgeInsets.all(15.0),
         child: new Image.asset(
           "assets/${workoutDetail[setIndex][workoutIndex]["img"]}.png",
           width: 400.0,
           height: 200.0,
         ),
-      ),
+      );
+  }
+
+  Widget currentWorkout() {
+    return Column(children: <Widget>[
+      currentWorkoutAsset(),
       Container(
         padding: EdgeInsets.all(5.0),
         child: Text(

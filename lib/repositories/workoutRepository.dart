@@ -5,7 +5,7 @@ class WorkoutRepository {
   Map<String, dynamic> getWorkout() {
     var workoutDetail = [
       [
-        {"name": "Push ups", "reps": "25x", "img": "push-ups"},
+        {"name": "squads", "reps": "25x", "img": "push-ups", "video": "https://blog.ohiohealth.com/wp-content/uploads/2019/05/Outdoor-Beginner-Workout-Squats-2.mp4?_=1"},
         {"name": "Pull ups", "reps": "20x", "img": "pull-ups"},
         {"name": "Sit ups", "reps": "18x", "img": "sit-ups"},
       ],
@@ -35,7 +35,6 @@ class WorkoutRepository {
       var finishedWorkouts = await getFinishedWorkouts();
       return {"success": true, "workoutList": finishedWorkouts};
     } catch (e) {
-      print(e);
       return {"error": "workout could not be saved;"};
     }
   }
