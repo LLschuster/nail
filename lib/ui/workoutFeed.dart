@@ -19,7 +19,9 @@ class WorkoutFeed extends StatelessWidget {
     }
 
     return SafeArea(
-      child: ListView(
+      child: Container(
+        color: Colors.grey[100],
+        child:       ListView(
         padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
         children: <Widget>[
           GestureDetector(
@@ -41,7 +43,9 @@ class WorkoutFeed extends StatelessWidget {
             child: workoutCard("cardimg3", "4.5"),
             ),
         ]
-      )
+      ),
+      ) 
+
     );
   }
 }

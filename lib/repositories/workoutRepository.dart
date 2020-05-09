@@ -5,19 +5,19 @@ class WorkoutRepository {
   Map<String, dynamic> getWorkout() {
     var workoutDetail = [
       [
-        {"name": "squads", "reps": "25x", "img": "push-ups", "video": "https://blog.ohiohealth.com/wp-content/uploads/2019/05/Outdoor-Beginner-Workout-Squats-2.mp4?_=1"},
-        {"name": "Pull ups", "reps": "20x", "img": "pull-ups"},
-        {"name": "Sit ups", "reps": "18x", "img": "sit-ups"},
+        {"name": "squads", "reps": 25,"repsUnit": "x", "img": "push-ups", "video": "https://blog.ohiohealth.com/wp-content/uploads/2019/05/Outdoor-Beginner-Workout-Squats-2.mp4?_=1"},
+        {"name": "Pull ups", "reps": 20, "repsUnit": "x", "img": "pull-ups"},
+        {"name": "Sit ups", "reps": 18, "repsUnit": "x", "img": "sit-ups"},
       ],
       [
-        {"name": "Push ups", "reps": "25x", "img": "push-ups"},
-        {"name": "Pull ups", "reps": "2 min", "img": "pull-ups"},
-        {"name": "Sit ups", "reps": "18x", "img": "sit-ups"},
+        {"name": "Push ups", "reps": 25, "repsUnit": "x", "img": "push-ups"},
+        {"name": "Pull ups", "reps": 2, "repsUnit": "min", "img": "pull-ups"},
+        {"name": "Sit ups", "reps": 18, "repsUnit": "x", "img": "sit-ups"},
       ],
       [
-        {"name": "Push ups", "reps": "25x", "img": "push-ups"},
-        {"name": "extreme push ups", "reps": "20x", "img": "push-ups"},
-        {"name": "Sit ups", "reps": "1 min", "img": "sit-ups"},
+        {"name": "Push ups", "reps": 25, "repsUnit": "x", "img": "push-ups"},
+        {"name": "extreme push ups", "reps": 20, "repsUnit": "x", "img": "push-ups"},
+        {"name": "Sit ups", "reps": 1, "repsUnit": "min", "img": "sit-ups"},
       ],
     ];
 
@@ -54,5 +54,12 @@ class WorkoutRepository {
       print(e);
       return {"error": "workout could not be saved;"};
     }
+  }
+
+  //TODO Workouts should be represented by clases not maps
+  Future<Map<String, dynamic>>
+  calculateWorkoutDetailBaseOnFinishedWorkouts(Map<String, dynamic> workoutToDo) async {
+    FinishWorkout lastWorkoutDone = await getLastWorkoutOfId(workoutToDo["id"]);
+    if (lastWorkoutDone == null) return workoutToDo["workoutDetail"];
   }
 }

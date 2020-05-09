@@ -4,7 +4,6 @@ import 'package:nail/repositories/base.dart';
 import 'package:nail/repositories/workoutRepository.dart';
 import 'package:nail/ui/clock.dart';
 import 'package:nail/ui/selectDifficultyDialog.dart';
-import 'package:nail/ui/workoutCard.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:video_player/video_player.dart';
@@ -133,7 +132,7 @@ class WorkoutDetailState extends State<WorkoutDetail> {
                 style: TextStyle(color: Colors.black, fontSize: 14),
               ),
               trailing: Text(
-                "${workoutDetail[i][j]["reps"]}",
+                "${workoutDetail[i][j]["reps"]} ${workoutDetail[i][j]["repsUnit"]}",
                 style: TextStyle(color: Colors.grey, fontSize: 14),
               ),
             ),
@@ -181,17 +180,18 @@ class WorkoutDetailState extends State<WorkoutDetail> {
   }
 
   Widget currentWorkout() {
+    var workout = workoutDetail[setIndex][workoutIndex];
     return Column(children: <Widget>[
       currentWorkoutAsset(),
       Container(
         padding: EdgeInsets.all(5.0),
         child: Text(
-          "${workoutDetail[setIndex][workoutIndex]["name"]}",
+          "${workout["name"]}",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
       Container(
-        child: Text(" ${workoutDetail[setIndex][workoutIndex]["reps"]}",
+        child: Text(" ${workout["reps"]} ${workout["repsUnit"]}",
             style: TextStyle(fontSize: 14)),
       ),
       clock(elapseTime)

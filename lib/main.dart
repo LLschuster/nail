@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Nail workuot',
         theme: ThemeData(
-            primarySwatch: Colors.grey, accentColor: Colors.blue),
+            primarySwatch: Colors.blueGrey, accentColor: Colors.blue),
         home: Consumer<Base>(builder: (_, store, __) => HomePage(title: 'Fitness track', store: store,),),
       ),
     );
@@ -57,7 +57,10 @@ class _HomePageState extends State<HomePage> {
     print(store);
     return Scaffold(
       appBar: AppBar(
+        leading: Icon(Icons.menu),
+        centerTitle: true,
         title: Text(widget.title),
+        actions: <Widget>[Icon(Icons.search)],
       ),
       body: pages[_pageIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -73,7 +76,7 @@ class _HomePageState extends State<HomePage> {
         ],
         currentIndex: _pageIndex,
         onTap: _changePageIndex,
-        selectedItemColor: Colors.grey[300],
+        selectedItemColor: Colors.blueGrey,
       ),
     );
   }

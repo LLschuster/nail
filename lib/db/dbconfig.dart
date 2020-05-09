@@ -40,3 +40,21 @@ Future<List<FinishWorkout>> getFinishedWorkouts() async{
       workoutDetail: result[i]["workoutDetail"]);
   });
 }
+
+Future<FinishWorkout> getLastWorkoutOfId(int id) async{
+  var db = await database();
+
+  var result = await db.query(FINISHED_WORKOUT_TABLE, where: "id = $id", orderBy: "time DESC", limit: 1);
+
+  if (result.length <= 0) return null;
+  return  
+    FinishWorkout(
+      result[0]["id"],
+      result[0]["status"],
+      result[0]["time"],
+      difficultyLevel: result[0]["difficultyLevel"],
+      workoutId: result[0]["workoutId"],
+      name: result[0]["name"],
+      workoutDetail: result[0]["workoutDetail"]
+  );
+}
